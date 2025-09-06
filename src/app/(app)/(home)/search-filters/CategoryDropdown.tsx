@@ -1,14 +1,16 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { useDropdownPosition } from "./useDropdownPosition";
-import { SubcategoryMenu } from "./SubcategoryMenu";
-import { CustomCategory } from "../type";
+
+import { CategoriesGetManyOutput } from "@/modules/categories/typs";
+
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { SubcategoryMenu } from "./SubcategoryMenu";
 
 interface Props {
-  category: CustomCategory;
+  category: CategoriesGetManyOutput[1];
   isActive?: boolean;
   isNavigationHovered?: boolean;
 }

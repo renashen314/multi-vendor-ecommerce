@@ -1,4 +1,4 @@
-import { CustomCategory } from "../type";
+"use client";
 import { useRouter } from "next/navigation";
 
 import {
@@ -10,57 +10,63 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import { CategoriesGetManyOutput, CategoriesGetManyOutputSingle } from "@/modules/categories/typs";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data: CustomCategory[];
 }
-export const CategoriesSidebar = ({ open, onOpenChange, data }: Props) => {
-    const router = useRouter()
+
+export const CategoriesSidebar = ({ open, onOpenChange }: Props) => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
+
+  const router = useRouter();
   const [parentCategories, setParentCategories] = useState<
-    CustomCategory[] | null
+    CategoriesGetManyOutput | null
   >(null);
   const [selectedCategory, setSelectedCategory] =
-    useState<CustomCategory | null>(null);
+    useState<CategoriesGetManyOutputSingle | null>(null);
 
   // if we have parent categories show them, otherwise show root categories
   const currentCategories = parentCategories ?? data ?? [];
 
   const handleOpenChange = (open: boolean) => {
-    setSelectedCategory(null)
-    setParentCategories(null)
-    onOpenChange(open)
-  }
+    setSelectedCategory(null);
+    setParentCategories(null);
+    onOpenChange(open);
+  };
 
-  const handleCategoryClick = (category: CustomCategory) => {
+  const handleCategoryClick = (category: CategoriesGetManyOutputSingle) => {
     if (category.subcategories && category.subcategories.length > 0) {
-        setParentCategories(category.subcategories as CustomCategory[])
-        setSelectedCategory(category)
+      setParentCategories(category.subcategories as CategoriesGetManyOutput);
+      setSelectedCategory(category);
     } else {
-        //this is a leaf category, no sub
-        if (parentCategories && selectedCategory) {
-            // this is a sub category - navigate to /category/subcategory
-            router.push(`/${selectedCategory.slug}/${category.slug}`)
+      //this is a leaf category, no sub
+      if (parentCategories && selectedCategory) {
+        // this is a sub category - navigate to /category/subcategory
+        router.push(`/${selectedCategory.slug}/${category.slug}`);
+      } else {
+        if (category.slug === "all") {
+          router.push("/");
         } else {
-            if (category.slug === "all") {
-                router.push("/")
-            } else {
-                router.push(`/${category.slug}`)
-            }
+          router.push(`/${category.slug}`);
         }
-        handleOpenChange(false)
+      }
+      handleOpenChange(false);
     }
-  }
+  };
 
   const handleBackClick = () => {
     if (parentCategories) {
-        setParentCategories(null)
-        setSelectedCategory(null)
+      setParentCategories(null);
+      setSelectedCategory(null);
     }
-  }
+  };
 
-  const backgroundColor = selectedCategory?.color || "white"
+  const backgroundColor = selectedCategory?.color || "white";
 
   return (
     <div>
