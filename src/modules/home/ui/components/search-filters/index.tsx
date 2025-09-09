@@ -5,6 +5,7 @@ import { Categories } from "./Categories";
 import SearchInput from "./SearchInput";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { DEFAULT_BG_COLOR } from "@/modules/home/constants";
+import { BreadcrumbNavigation } from "./BreadcrumbNavigation";
 
 export const SearchFilters = () => {
   const trpc = useTRPC();
@@ -24,7 +25,7 @@ export const SearchFilters = () => {
   const activeSubcategory = (params.subcategory as string) || undefined;
   const activeSubcategoryName =
     activeCategoryData?.subcategories?.find(
-      (sub) => sub.slug === activeCategory
+      (sub) => sub.slug === activeSubcategory
     )?.name || null;
 
   return (
@@ -36,6 +37,11 @@ export const SearchFilters = () => {
       <div className="hidden lg:block">
         <Categories data={data} />
       </div>
+      <BreadcrumbNavigation 
+      activeCategoryName={activeCategoryName}
+      activeCategory={activeCategory}
+      activeSubcategoryName={activeSubcategoryName}
+      />
     </div>
   );
 };
