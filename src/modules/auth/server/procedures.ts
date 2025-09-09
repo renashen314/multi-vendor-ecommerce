@@ -1,10 +1,10 @@
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
-import { headers as getHeaders, cookies as getCookies } from "next/headers";
+import { headers as getHeaders  } from "next/headers";
 import z from "zod";
 
 import { TRPCError } from "@trpc/server";
-import { AUTH_COOKIE } from "../constants/constants";
 import { registerSchema } from "../schemas";
+import { generateAuthCookie } from "../utils";
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -15,10 +15,6 @@ export const authRouter = createTRPCRouter({
     console.log({session})
 
     return session;
-  }),
-  logout: baseProcedure.mutation(async () => {
-    const cookies = await getCookies();
-    cookies.delete(AUTH_COOKIE);
   }),
   register: baseProcedure
     .input(registerSchema)
@@ -88,17 +84,10 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      const cookies = await getCookies();
-      cookies.set({
-        name: AUTH_COOKIE,
-        value: data.token,
-        httpOnly: true,
-        path: "/",
-        // sameSite: "none",
-        // domain:""
-        //todo: ensure cross-domin cookie sharing
-        //funroad.co //initial cookie
-      });
+      await generateAuthCookie({
+        prefix: ctx.db.config.cookiePrefix,
+        value: data.token
+      })
 
       return data;
     }),

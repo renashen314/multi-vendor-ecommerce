@@ -4,15 +4,22 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../schemas";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/client";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,15 +27,23 @@ const poppins = Poppins({
 });
 
 export const SignInView = () => {
-const router = useRouter()
+  const router = useRouter();
 
-  const trpc = useTRPC()
-  const login = useMutation(trpc.auth.login.mutationOptions({
-    onError: (error) => {
-      toast.error(error.message)
-    },
-    onSuccess: () => router.push("/")
-  }))
+  const trpc = useTRPC();
+
+  const queryClient = useQueryClient();
+  
+  const login = useMutation(
+    trpc.auth.login.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message);
+      },
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
+        router.push("/");
+      },
+    })
+  );
 
   const form = useForm<z.infer<typeof loginSchema>>({
     mode: "all",
@@ -39,7 +54,7 @@ const router = useRouter()
     },
   });
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    login.mutate(values)
+    login.mutate(values);
   };
 
   return (
@@ -64,38 +79,45 @@ const router = useRouter()
                 size="sm"
                 className="text-base border-none underline"
               >
-                <Link prefetch href="/sign-up">Sign up</Link>
+                <Link prefetch href="/sign-up">
+                  Sign up
+                </Link>
               </Button>
             </div>
-            <h1 className="text-4xl font-medium">
-              Welcome back to Funroad
-            </h1>
-            <FormField name="email" render={({field})=>(
-              <FormItem>
-                <FormLabel className="text-base">Email</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}/>
-            <FormField name="password" render={({field})=>(
-              <FormItem>
-                <FormLabel className="text-base">Password</FormLabel>
-                <FormControl>
-                  <Input {...field} type="password" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}/>
-          <Button
-          disabled={login.isPending}
-          type="submit"
-          size="lg"
-          variant="elevated"
-          className="bg-black text-white hover:bg-pink-400 hover:text-primary">
-            Log in
-          </Button>
+            <h1 className="text-4xl font-medium">Welcome back to Funroad</h1>
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">Password</FormLabel>
+                  <FormControl>
+                    <Input {...field} type="password" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              disabled={login.isPending}
+              type="submit"
+              size="lg"
+              variant="elevated"
+              className="bg-black text-white hover:bg-pink-400 hover:text-primary"
+            >
+              Log in
+            </Button>
           </form>
         </Form>
       </div>

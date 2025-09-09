@@ -1,18 +1,19 @@
 "use client";
 import z from "zod";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTRPC } from "@/trpc/client";
+import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+
+import { useForm } from "react-hook-form";
 import { registerSchema } from "../../schemas";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -23,11 +24,16 @@ export const SignUpView = () => {
 const router = useRouter()
 
   const trpc = useTRPC()
+
+  const queryClient = useQueryClient();
+
   const register = useMutation(trpc.auth.register.mutationOptions({
     onError: (error) => {
       toast.error(error.message)
     },
-    onSuccess: () => router.push("/")
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(trpc.auth.session.queryFilter())
+      router.push("/")}
   }))
 
   const form = useForm<z.infer<typeof registerSchema>>({
