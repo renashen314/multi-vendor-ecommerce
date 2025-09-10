@@ -1,4 +1,5 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { CategoriesGetManyOutput } from "@/modules/categories/typs";
@@ -14,6 +15,8 @@ interface CategoriesProps {
 }
 
 export const Categories = ({ data }: CategoriesProps) => {
+  const params = useParams()
+
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
@@ -22,7 +25,8 @@ export const Categories = ({ data }: CategoriesProps) => {
   const [isAnyHovered, setIsAnyHovered] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const activeCategory = "all";
+  const categoryParam = params.category as string | undefined
+  const activeCategory = categoryParam || "all"
 
   const activeCategoryIndex = data.findIndex(
     (cat) => cat.slug === activeCategory
@@ -94,6 +98,7 @@ export const Categories = ({ data }: CategoriesProps) => {
 
         <div ref={viewAllRef} className="shrink-0">
           <Button
+          variant="elevated"
             className={cn(
               "h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
               isActiveCategoryHidden && !isAnyHovered && "bg-white border-primary"
