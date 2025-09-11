@@ -16,9 +16,8 @@ interface Props {
 const SearchInput = ({ disabled }: Props) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-const trpc = useTRPC()
-const session = useQuery(trpc.auth.session.queryOptions())
-
+  const trpc = useTRPC();
+  const session = useQuery(trpc.auth.session.queryOptions());
 
   return (
     <div className="flex items-center gap-2 w-full">
@@ -41,8 +40,8 @@ const session = useQuery(trpc.auth.session.queryOptions())
       {session.data?.user && (
         <Button asChild variant="elevated">
           <Link href="/library">
-          <BookmarkCheckIcon />
-          Library
+            <BookmarkCheckIcon />
+            Library
           </Link>
         </Button>
       )}
