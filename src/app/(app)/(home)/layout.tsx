@@ -5,6 +5,7 @@ import { SearchFilters, SearchFiltersLoading } from "@/modules/home/ui/component
 import { getQueryClient, trpc } from "@/trpc/server";
 import { Suspense } from "react";
 
+
 interface Props {
   children: React.ReactNode;
 }
