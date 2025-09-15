@@ -7,7 +7,7 @@ import {
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { ProductFilters } from "@/modules/products/ui/components/ProductFilters";
-import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
+import { loadProductFilters } from "@/modules/products/searchParams";
 
 interface Props {
   params: Promise<{
