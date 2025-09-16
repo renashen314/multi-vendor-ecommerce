@@ -12,7 +12,7 @@ import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { CategoriesGetManyOutput, CategoriesGetManyOutputSingle } from "@/modules/categories/typs";
+import { CategoriesGetManyOutput } from "@/modules/categories/typs";
 
 interface Props {
   open: boolean;
@@ -28,7 +28,7 @@ export const CategoriesSidebar = ({ open, onOpenChange }: Props) => {
     CategoriesGetManyOutput | null
   >(null);
   const [selectedCategory, setSelectedCategory] =
-    useState<CategoriesGetManyOutputSingle | null>(null);
+    useState<CategoriesGetManyOutput[0] | null>(null);
 
   // if we have parent categories show them, otherwise show root categories
   const currentCategories = parentCategories ?? data ?? [];
@@ -39,7 +39,7 @@ export const CategoriesSidebar = ({ open, onOpenChange }: Props) => {
     onOpenChange(open);
   };
 
-  const handleCategoryClick = (category: CategoriesGetManyOutputSingle) => {
+  const handleCategoryClick = (category: CategoriesGetManyOutput[0]) => {
     if (category.subcategories && category.subcategories.length > 0) {
       setParentCategories(category.subcategories as CategoriesGetManyOutput);
       setSelectedCategory(category);
