@@ -1,6 +1,5 @@
 "use client";
 import { useRef, useState } from "react";
-import { useDropdownPosition } from "./useDropdownPosition";
 
 import { CategoriesGetManyOutput } from "@/modules/categories/typs";
 
@@ -22,8 +21,6 @@ export const CategoryDropdown = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { getDropdownPosition } = useDropdownPosition(dropdownRef);
-  const dropdownPosition = getDropdownPosition();
 
   const onMouseEnter = () => {
     if (category.subcategories) {
@@ -74,7 +71,6 @@ export const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
-        position={dropdownPosition}
       />
     </div>
   );
