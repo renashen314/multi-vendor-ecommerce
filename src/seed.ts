@@ -164,21 +164,6 @@ const seed = async () => {
   console.log("\x1b[32m✓ Admin user created\x1b[0m");
   await delay(100)
 
-  // // Prepare all categories data
-  // console.log("Preparing categories data...");
-  // const parentCategories = [];
-  // const subCategories = [];
-
-  // for (const category of categories) {
-  //   parentCategories.push({
-  //     name: category.name,
-  //     color: category.color,
-  //     slug: category.slug,
-  //     parent: null,
-  //   });
-  // }
-
-
   // Create all parent categories in batch
   console.log(`Creating ${categories.length} categories...`);
   for (const category of categories) {
@@ -218,36 +203,6 @@ const seed = async () => {
   }
 
   console.log("\x1b[32m✓ All categories created successfully\x1b[0m");
-
-  // // Create all subcategories in batches
-  // if (subCategories.length > 0) {
-  //   console.log(`Creating ${subCategories.length} subcategories`);
-  //   const batchSize = 10;
-  //   for (let i = 0; i < subCategories.length; i += batchSize) {
-  //     const batch = subCategories.slice(i, i + batchSize);
-  //     await Promise.all(
-  //       batch.map(async (subcategory) => {
-  //         try {
-  //           return await payload.create({
-  //             collection: "categories",
-  //             data: {
-  //               name: subcategory.name,
-  //               slug: subcategory.slug,
-  //               parent: subcategory.parent,
-  //             },
-  //           });
-  //         } catch (error) {
-  //           console.error(
-  //             `Failed to create subcategory: ${subcategory.name}`,
-  //             error
-  //           );
-  //           throw error;
-  //         }
-  //       })
-  //     );
-  //     console.log(`✓ Created batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(subCategories.length/batchSize)} of subcategories`);
-  //   }
-  // }
 };
 
 try {
