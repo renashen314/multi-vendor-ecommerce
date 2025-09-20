@@ -59,6 +59,7 @@ export const authRouter = createTRPCRouter({
           ]
         },
       });
+      
       const data = await ctx.db.login({
         collection: "users",
         data: {
