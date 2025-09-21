@@ -73,6 +73,11 @@ export const authRouter = createTRPCRouter({
           message: "Failed to login",
         });
       }
+      
+      await generateAuthCookie({
+        prefix: ctx.db.config.cookiePrefix,
+        value: data.token
+      })
     }),
 
   login: baseProcedure
