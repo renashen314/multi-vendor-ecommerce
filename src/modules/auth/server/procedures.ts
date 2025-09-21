@@ -12,10 +12,9 @@ export const authRouter = createTRPCRouter({
 
     const session = await ctx.db.auth({ headers });
 
-    console.log({session})
-
     return session;
   }),
+
   register: baseProcedure
     .input(registerSchema)
     .mutation(async ({ input, ctx }) => {
@@ -27,8 +26,8 @@ export const authRouter = createTRPCRouter({
             equals: input.username
           }
         }
-      
       })
+
       const existingUser = existingData.docs[0]
       if(existingUser) {
         throw new TRPCError({
@@ -59,7 +58,7 @@ export const authRouter = createTRPCRouter({
           ]
         },
       });
-      
+
       const data = await ctx.db.login({
         collection: "users",
         data: {
